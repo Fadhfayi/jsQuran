@@ -17,89 +17,105 @@
 <body>
     <br>
     <br>
+    
     <div class="container">
-    <a class="btn btn-primary" href="#" id="get-data" role="button" >Buka Daftar Surat</a>
-    <br>
- 
-    <div class="container">
-        <br>
-        <div class="row" >
-            <div class="col-6">
-            
-                <div id="show-data">
-                </div>
-         
+        <div class="bg-success p-2" style="--bs-bg-opacity: .5;">
+        <div class="row">
+            <div class="col-7" >
+        <a class="btn btn-primary" href="#" id="get-data" role="button">Buka Daftar Surat</a>
+        </div>
+        <div class="col-5">
+            <h4>Tampilan 10 ayat pertama</h4>
             </div>
-            <div class="col-6">
-                <div id="show-data2">
+        <br>
+    </div>
+            <br>
+            <div class="row">
+                <div class="col-6">
+
+                    <div id="show-data">
+                    </div>
+
+                </div>
+                <div class="col-6">
+                    <div id="show-data2">
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
 
 
 
-    <script>
-        $(document).ready(() => {
+        <script>
+            $(document).ready(() => {
 
-            const $showData = $('#show-data');
-            //   const $raw = $('pre');
+                const $showData = $('#show-data');
+                //   const $raw = $('pre');
 
-            $('#get-data').on('click', (event) => {
-                //  jangan refresh halaman    
-                event.preventDefault();
+                $('#get-data').on('click', (event) => {
+                    //  jangan refresh halaman    
+                    event.preventDefault();
 
-                $showData.text('Loading the JSON file.');
+                    $showData.text('Loading the JSON file.');
 
-                // get json di endpoint
-                $.getJSON('https://api.alquran.cloud/v1/surah', (respon) => {
-                    console.log(respon.code);
-                    console.log(respon.status);
+                    // get json di endpoint
+                    $.getJSON('https://api.alquran.cloud/v1/surah', (respon) => {
+                        console.log(respon.code);
+                        console.log(respon.status);
 
-                    // mengatur ulang format respon dari json menjadi html
-                    //   const head = '<li>0: Default</li>'
-                    const markup = respon.data
-                        .map(item => `<tr>
-                            <td class="surat" data-nomer="${item.number}">
-                ${item.number}: ${item.name}
-            </td>
-            <td class="surat" data-nomer="${item.number}">
-                ${item.englishName}
-            </td>`)
-                        .join('');
+                        // mengatur ulang format respon dari json menjadi html
+                        //   const head = '<li>0: Default</li>'
+                        const markup = respon.data
+                            .map(item =>
+                                `<table class="table table-success table-striped">
+                                    <tr>
+                                    <td class="surat" data-nomer="${item.number}">
+                                                     ${item.number}: ${item.name}
+                                     </td>
+                                  <td class="surat" data-nomer="${item.number}">
+                                                      ${item.englishName}
+                                    </td>
+                                    </tr>
+                                    </table`)
+                            .join('');
 
-                    const list = $('<ul />').html(markup);
+                        const list = $('<ul />').html(markup);
 
-                    // tampilkan di kolom ke dua
-                    $showData.html(list);
+                        // tampilkan di kolom ke dua
+                        $showData.html(list);
 
 
-                    $('.surat').on('click', function (event) {
-                        // console.log($(event.target).data("nomer"));
+                        $('.surat').on('click', function (event) {
+                            // console.log($(event.target).data("nomer"));
 
-                        $.getJSON('https://api.alquran.cloud/v1/surah/' + $(event.target).data("nomer") + '?offset=0&limit=10', (respon) => {
-                            console.log(respon.code);
-                            console.log(respon.status);
-                            const markup = respon.data.ayahs
-                                .map(item => `<tr>
+                            $.getJSON('https://api.alquran.cloud/v1/surah/' + $(event.target).data("nomer") + '?offset=0&limit=10', (respon) => {
+                                console.log(respon.code);
+                                console.log(respon.status);
+                                const markup = respon.data.ayahs
+                                    .map(item => `
+                                <table class="table table-success table-striped">
+                                    <tr>
                                     <td> ${item.numberInSurah}</td>
                                     <td> ${item.text}</td>
-                                    <tr>`)
-                                .join('');
+                                    <tr>
+                                </table>`
+                                    )
+                                    .join('');
 
-                            const list = $('<ul />').html(markup);
+                                const list = $('<ul />').html(markup);
 
-                            $('#show-data2').html(list);
+                                $('#show-data2').html(list);
 
+                            });
                         });
-                      });
+                    });
                 });
             });
-        });
 
-    </script>
+        </script>
 </body>
 
 </html>
